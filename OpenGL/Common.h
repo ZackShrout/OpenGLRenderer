@@ -1,0 +1,20 @@
+#pragma once
+
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif // !STD_IMAGE_IMPLEMENTATION
+
+// C/C++ Standard
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <vector>
+#include <fstream>
+#include <cassert>
+
+// OpenGL related
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
