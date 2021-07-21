@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include "Vendor/stb/stb_image.h"
 
 Texture::~Texture()
 {
