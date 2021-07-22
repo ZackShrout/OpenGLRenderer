@@ -1,7 +1,8 @@
 #include "Shader.h"
 
 // PUBLIC
-Shader::Shader() : m_shaderID{ 0 }, m_uniformModel{ 0 }, m_uniformProjection{ 0 }, m_uniformView{ 0 }
+Shader::Shader() : m_shaderID{ 0 }, m_uniformModel{ 0 }, m_uniformProjection{ 0 }, m_uniformView{ 0 }, 
+					m_uniformAmbientIntensity{ 0 }, m_uniformAmbientColor{ 0 }, m_uniformDiffuseIntensity{ 0 }, m_uniformDirection{ 0 }
 {
 	
 }
@@ -41,21 +42,6 @@ std::string Shader::ReadFile(const char* filePath)
 	
 	fileStream.close();
 	return content;
-}
-
-unsigned int Shader::GetProjectionLocation()
-{
-	return m_uniformProjection;
-}
-
-unsigned int Shader::GetModelLocation()
-{
-	return m_uniformModel;
-}
-
-unsigned int Shader::GetViewLocation()
-{
-	return m_uniformView;
 }
 
 void Shader::UseShader()
@@ -116,6 +102,11 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	m_uniformModel = glGetUniformLocation(m_shaderID, "model");
 	m_uniformProjection = glGetUniformLocation(m_shaderID, "projection");
 	m_uniformView = glGetUniformLocation(m_shaderID, "view");
+	m_uniformAmbientColor = glGetUniformLocation(m_shaderID, "directionalLight.color");
+	m_uniformAmbientIntensity = glGetUniformLocation(m_shaderID, "directionalLight.ambientIntensity");
+	m_uniformDiffuseIntensity = glGetUniformLocation(m_shaderID, "directionalLight.diffuseIntensity");
+	m_uniformDirection = glGetUniformLocation(m_shaderID, "directionalLight.direction");
+	
 }
 
 void Shader::AddShader(unsigned int theProgram, const char* shaderCode, GLenum shaderType)
