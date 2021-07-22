@@ -1,21 +1,11 @@
 #include "Camera.h"
 
-Camera::Camera()
-	:m_yaw{ 0 }, m_pitch{ 0 }, m_rotation{ 0 }, m_movementSpeed{ 0 }, m_turnSpeed{ 0 }
-{
-
-}
-
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed)
 	: m_position{ startPosition }, m_worldUp{ startUp }, m_yaw{ startYaw }, m_pitch{ startPitch }, m_rotation { 0 }, m_movementSpeed{ startMoveSpeed }, m_turnSpeed{ startTurnSpeed }
 {
 	m_front = glm::vec3(0.0f, 0.0f, 1.0f);
 
 	Update();
-}
-
-Camera::~Camera()
-{
 }
 
 void Camera::KeyControl(bool* keys, GLfloat dt)
@@ -62,11 +52,6 @@ void Camera::MouseControl(GLfloat xChange, GLfloat yChange)
 	}
 
 	Update();
-}
-
-glm::mat4 Camera::CalculateViewMatrix()
-{
-	return glm::lookAt(m_position, m_position + m_front, m_up);
 }
 
 void Camera::Update()

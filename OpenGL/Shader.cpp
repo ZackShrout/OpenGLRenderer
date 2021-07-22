@@ -1,12 +1,6 @@
 #include "Shader.h"
 
 // PUBLIC
-Shader::Shader() : m_shaderID{ 0 }, m_uniformModel{ 0 }, m_uniformProjection{ 0 }, m_uniformView{ 0 }, 
-					m_uniformAmbientIntensity{ 0 }, m_uniformAmbientColor{ 0 }, m_uniformDiffuseIntensity{ 0 }, m_uniformDirection{ 0 }
-{
-	
-}
-
 Shader::~Shader()
 {
 	ClearShader();
@@ -106,6 +100,9 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	m_uniformAmbientIntensity = glGetUniformLocation(m_shaderID, "directionalLight.ambientIntensity");
 	m_uniformDiffuseIntensity = glGetUniformLocation(m_shaderID, "directionalLight.diffuseIntensity");
 	m_uniformDirection = glGetUniformLocation(m_shaderID, "directionalLight.direction");
+	m_uniformEyePosition = glGetUniformLocation(m_shaderID, "eyePosition");
+	m_uniformSpecularIntensity = glGetUniformLocation(m_shaderID, "material.specularIntensity");
+	m_uniformShininess = glGetUniformLocation(m_shaderID, "material.shininess");
 	
 }
 

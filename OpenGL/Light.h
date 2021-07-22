@@ -9,6 +9,8 @@ public:
 	Light(GLfloat r, GLfloat g, GLfloat b, GLfloat aIntensity, GLfloat xDir, GLfloat yDir, GLfloat zDir, GLfloat dIntensity) 
 		: m_color{ glm::vec3(r, g, b) }, m_direction{ glm::vec3(xDir, yDir, zDir) }, m_ambientIntensity{ aIntensity }, m_diffuseIntensity{ dIntensity } {}
 	~Light() {}
+	
+	// TODO: change all to unsigned int
 	void UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation, GLfloat diffuseIntensityLocation, GLfloat directionLocation);
 
 private:
