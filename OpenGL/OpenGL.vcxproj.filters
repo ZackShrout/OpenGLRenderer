@@ -82,4 +82,9 @@
     <None Include="Shaders\vshader.glsl" />
     <None Include="Shaders\fshader.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\zshro\Downloads\plain.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

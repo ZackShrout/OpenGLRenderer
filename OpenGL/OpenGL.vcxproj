@@ -46,6 +46,9 @@
     <None Include="Shaders\fshader.glsl" />
     <None Include="Shaders\vshader.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\zshro\Downloads\plain.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

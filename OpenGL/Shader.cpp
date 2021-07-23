@@ -129,25 +129,25 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	{
 		char locationBuffer[100] = { '\0' };
 
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].base.color", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].base.color", i);
 		m_uniformPointLight[i].uniformColor = glGetUniformLocation(m_shaderID, locationBuffer);
 
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].base.ambientIntensity", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].base.ambientIntensity", i);
 		m_uniformPointLight[i].uniformAmbientIntensity = glGetUniformLocation(m_shaderID, locationBuffer);
 
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].base.diffuseIntensity", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].base.diffuseIntensity", i);
 		m_uniformPointLight[i].uniformDiffuseIntensity = glGetUniformLocation(m_shaderID, locationBuffer);
 
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].position", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].position", i);
 		m_uniformPointLight[i].uniformPosition = glGetUniformLocation(m_shaderID, locationBuffer);
 		
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].constant", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].constant", i);
 		m_uniformPointLight[i].uniformConstant = glGetUniformLocation(m_shaderID, locationBuffer);
 		
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].linear", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].linear", i);
 		m_uniformPointLight[i].uniformLinear = glGetUniformLocation(m_shaderID, locationBuffer);
 		
-		snprintf(locationBuffer, sizeof(locationBuffer), "pointLights[%d].exponent", i);
+		snprintf(locationBuffer, sizeof(locationBuffer), "pointLight[%d].exponent", i);
 		m_uniformPointLight[i].uniformExponent = glGetUniformLocation(m_shaderID, locationBuffer);
 	}
 }
