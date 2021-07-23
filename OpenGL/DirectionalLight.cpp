@@ -1,6 +1,6 @@
-#include "Light.h"
+#include "DirectionalLight.h"
 
-void Light::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation, GLfloat diffuseIntensityLocation, GLfloat directionLocation)
+void DirectionalLight::UseLight(unsigned int ambientIntensityLocation, unsigned int ambientColorLocation, unsigned int diffuseIntensityLocation, unsigned int directionLocation)
 {
 	glUniform3f(ambientColorLocation, m_color.x, m_color.y, m_color.z);
 	glUniform1f(ambientIntensityLocation, m_ambientIntensity);

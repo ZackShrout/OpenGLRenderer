@@ -4,7 +4,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Material.h"
 
 constexpr int WIDTH = 1366, HEIGHT = 768;
@@ -16,7 +16,7 @@ Texture brickTexture;
 Texture dirtTexture;
 Material shinyMaterial;
 Material dullMaterial;
-Light mainLight;
+DirectionalLight mainLight;
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 
@@ -31,7 +31,7 @@ static const char* fShader = "..\\OpenGL\\Shaders\\fshader.glsl";
 
 void CalcAverageNormals(unsigned int* indices, unsigned int numIndices, float* vertices, unsigned int numVertices, unsigned int vLength, unsigned int nOffset)
 {
-	for (int i{ 0 }; i < numIndices; i += 3)
+	for (unsigned int i{ 0 }; i < numIndices; i += 3)
 	{
 		unsigned int in0{ indices[i] * vLength };
 		unsigned int in1{ indices[i + 1] * vLength };
@@ -51,7 +51,7 @@ void CalcAverageNormals(unsigned int* indices, unsigned int numIndices, float* v
 		vertices[in2] += normal.x; vertices[in2 + 1] += normal.y; vertices[in2 + 2] += normal.z;
 	}
 
-	for (int i{ 0 }; i < numVertices / vLength; i++)
+	for (unsigned int i{ 0 }; i < numVertices / vLength; i++)
 	{
 		unsigned int normalOffset = i * vLength + nOffset;
 		glm::vec3 vec(vertices[normalOffset], vertices[normalOffset + 1], vertices[normalOffset + 2]);
@@ -117,17 +117,16 @@ int main(void)
 	shinyMaterial = Material(1.0f, 32);
 	dullMaterial = Material(0.3f, 4);
 
-	mainLight = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 0.3f);
+	mainLight = DirectionalLight(2.0f, -1.0f, -2.0f, 1.0f, 1.0f, 1.0f, 0.2f, 0.3f);
 
-	unsigned int uniformProjection{ 0 }, uniformModel{ 0 }, uniformView{ 0 }, uniformAmbientIntensity{ 0 }, uniformAmbientColor{ 0 };
-	unsigned int uniformDirection{ 0 }, uniformDiffuseIntensity{ 0 }, uniformEyePosition{ 0 }, uniformSpecularIntensity{ 0 }, uniformShininess{ 0 };
+	unsigned int uniformProjection{ 0 }, uniformModel{ 0 }, uniformView{ 0 }, uniformEyePosition{ 0 }, uniformSpecularIntensity{ 0 }, uniformShininess{ 0 };
 	glm::mat4 projection(1.0f);
 	projection = glm::perspective(45.0f, (GLfloat)mainWindow.GetBufferWidth() / (GLfloat)mainWindow.GetBufferHeight(), 0.1f, 100.0f);
 
     // Loop until the user closes the window
     while (!mainWindow.GetShouldClose())
     {
-		float now = glfwGetTime();
+		float now = (float)glfwGetTime();
 		deltaTime = now - lastTime;
 		lastTime = now;
 		
@@ -139,15 +138,12 @@ int main(void)
 		uniformModel = shaders[0]->GetModelLocation();
 		uniformProjection = shaders[0]->GetProjectionLocation();
 		uniformView = shaders[0]->GetViewLocation();
-		uniformAmbientColor = shaders[0]->GetAmbientColorLocation();
-		uniformAmbientIntensity = shaders[0]->GetAmbientIntensityLocation();
-		uniformDirection = shaders[0]->GetDirectionLocation();
-		uniformDiffuseIntensity = shaders[0]->GetDiffuseIntensityLocation();
 		uniformEyePosition = shaders[0]->GetEyePositionLocation();
 		uniformSpecularIntensity = shaders[0]->GetSpecularIntensityLocation();
 		uniformShininess = shaders[0]->GetShininessLocation();
 
-		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColor, uniformDiffuseIntensity, uniformDirection);
+		shaders[0]->SetDirectionalLight(&mainLight);
+		
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix()));
@@ -155,7 +151,6 @@ int main(void)
 
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		brickTexture.UseTexture();
@@ -165,7 +160,6 @@ int main(void)
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, 2.5f, -2.5f));
-		//model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		dirtTexture.UseTexture();
 		dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
