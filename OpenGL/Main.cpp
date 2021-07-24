@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include "Material.h"
 
 constexpr int WIDTH = 1366, HEIGHT = 768;
@@ -20,6 +21,7 @@ Material shinyMaterial;
 Material dullMaterial;
 DirectionalLight mainLight;
 PointLight pointLight[MAX_POINT_LIGHTS];
+SpotLight spotLight[MAX_SPOT_LIGHTS];
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 
@@ -142,11 +144,16 @@ int main(void)
 	dullMaterial = Material(0.3f, 4);
 
 	mainLight = DirectionalLight(2.0f, -1.0f, -2.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
-	unsigned int pointLightCount = 0;
-	pointLight[0] = PointLight(0.0f, 0.0f, 0.0f, 0.3, 0.2, 0.1, 0.0f, 0.0f, 1.0f, 0.1f, 1.0f);
+
+	unsigned int pointLightCount{ 0 };
+	pointLight[0] = PointLight(0.0f, 0.0f, 0.0f, 0.3, 0.2, 0.1, 0.0f, 0.0f, 1.0f, 0.1f, 0.1f);
 	pointLightCount++;
-	pointLight[1] = PointLight(-4.0f, 2.0f, 0.0f, 0.3, 0.1, 0.1, 0.0f, 1.0f, 0.0f, 0.1f, 1.0f);
+	pointLight[1] = PointLight(-4.0f, 2.0f, 0.0f, 0.3, 0.1, 0.1, 0.0f, 1.0f, 0.0f, 0.1f, 0.1f);
 	pointLightCount++;
+
+	unsigned int spotLightCount{ 0 };
+	spotLight[0] = SpotLight(0.0f, -1.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.3, 0.2, 0.1, 1.0f, 1.0f, 1.0f, 0.1f, 2.0f);
+	spotLightCount++;
 
 	unsigned int uniformProjection{ 0 }, uniformModel{ 0 }, uniformView{ 0 }, uniformEyePosition{ 0 }, uniformSpecularIntensity{ 0 }, uniformShininess{ 0 };
 	glm::mat4 projection(1.0f);
@@ -171,8 +178,13 @@ int main(void)
 		uniformSpecularIntensity = shaders[0]->GetSpecularIntensityLocation();
 		uniformShininess = shaders[0]->GetShininessLocation();
 
+		glm::vec3 lowerLight = camera.GetCameraPosition();
+		lowerLight.y -= 0.3f;
+		spotLight[0].SetFlash(lowerLight, camera.GetCameraDirection());
+
 		shaders[0]->SetDirectionalLight(&mainLight);
 		shaders[0]->SetPointLight(pointLight, pointLightCount);
+		shaders[0]->SetSpotLight(spotLight, spotLightCount);
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix()));
@@ -198,7 +210,7 @@ int main(void)
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		plainTexture.UseTexture();
+		dirtTexture.UseTexture();
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
 		meshes[2]->RenderMesh();

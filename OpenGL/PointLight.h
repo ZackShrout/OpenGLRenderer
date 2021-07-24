@@ -14,7 +14,7 @@ public:
 	void UseLight(unsigned int ambientIntensityLocation, unsigned int ambientColorLocation, unsigned int diffuseIntensityLocation, unsigned int positionLocation,
 		unsigned int constantLocation, unsigned int linearLocation, unsigned int exponentLocation);
 
-private:
+protected:
 	glm::vec3 m_position;
 	GLfloat m_constant, m_linear, m_exponent;
 };
