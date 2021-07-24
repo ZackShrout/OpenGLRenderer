@@ -8,6 +8,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Material.h"
+#include "assimp/Importer.hpp"
 
 constexpr int WIDTH = 1366, HEIGHT = 768;
 const float toRadians = 3.14159265f / 180.0f;
@@ -158,6 +159,8 @@ int main(void)
 	unsigned int uniformProjection{ 0 }, uniformModel{ 0 }, uniformView{ 0 }, uniformEyePosition{ 0 }, uniformSpecularIntensity{ 0 }, uniformShininess{ 0 };
 	glm::mat4 projection(1.0f);
 	projection = glm::perspective(45.0f, (GLfloat)mainWindow.GetBufferWidth() / (GLfloat)mainWindow.GetBufferHeight(), 0.1f, 100.0f);
+
+	Assimp::Importer importer = Assimp::Importer();
 
     // Loop until the user closes the window
     while (!mainWindow.GetShouldClose())
