@@ -8,7 +8,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "Material.h"
-#include "assimp/Importer.hpp"
+#include "Model.h"
 
 constexpr int WIDTH = 1366, HEIGHT = 768;
 const float toRadians = 3.14159265f / 180.0f;
@@ -20,6 +20,8 @@ Texture dirtTexture;
 Texture plainTexture;
 Material shinyMaterial;
 Material dullMaterial;
+Model xWing;
+Model blackHawk;
 DirectionalLight mainLight;
 PointLight pointLight[MAX_POINT_LIGHTS];
 SpotLight spotLight[MAX_SPOT_LIGHTS];
@@ -135,16 +137,22 @@ int main(void)
 	CreateShaders();
 
 	camera = Camera(glm::vec3(0.0f, 0.0f, -6.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 5.0f, 0.1f);
-	brickTexture = Texture((char*)"..\\OpenGL\\Assets\\brick.png");
-	brickTexture.LoadTexture();
-	dirtTexture = Texture((char*)"..\\OpenGL\\Assets\\dirt.png");
-	dirtTexture.LoadTexture();
-	plainTexture = Texture((char*)"..\\OpenGL\\Assets\\plain.png");
-	plainTexture.LoadTexture();
+	brickTexture = Texture((char*)"..\\OpenGL\\Textures\\brick.png");
+	brickTexture.LoadTextureA();
+	dirtTexture = Texture((char*)"..\\OpenGL\\Textures\\dirt.png");
+	dirtTexture.LoadTextureA();
+	plainTexture = Texture((char*)"..\\OpenGL\\Textures\\plain.png");
+	plainTexture.LoadTextureA();
 	shinyMaterial = Material(4.0f, 256);
 	dullMaterial = Material(0.3f, 4);
 
-	mainLight = DirectionalLight(2.0f, -1.0f, -2.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+	xWing = Model();
+	xWing.LoadModel("..\\OpenGL\\Models\\x-wing.obj");
+
+	blackHawk = Model();
+	blackHawk.LoadModel("..\\OpenGL\\Models\\uh60.obj");
+
+	mainLight = DirectionalLight(0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.3f, 0.6f);
 
 	unsigned int pointLightCount{ 0 };
 	pointLight[0] = PointLight(0.0f, 0.0f, 0.0f, 0.3, 0.2, 0.1, 0.0f, 0.0f, 1.0f, 0.1f, 0.1f);
@@ -159,8 +167,6 @@ int main(void)
 	unsigned int uniformProjection{ 0 }, uniformModel{ 0 }, uniformView{ 0 }, uniformEyePosition{ 0 }, uniformSpecularIntensity{ 0 }, uniformShininess{ 0 };
 	glm::mat4 projection(1.0f);
 	projection = glm::perspective(45.0f, (GLfloat)mainWindow.GetBufferWidth() / (GLfloat)mainWindow.GetBufferHeight(), 0.1f, 100.0f);
-
-	Assimp::Importer importer = Assimp::Importer();
 
     // Loop until the user closes the window
     while (!mainWindow.GetShouldClose())
@@ -187,7 +193,7 @@ int main(void)
 
 		shaders[0]->SetDirectionalLight(&mainLight);
 		shaders[0]->SetPointLight(pointLight, pointLightCount);
-		shaders[0]->SetSpotLight(spotLight, spotLightCount);
+		//shaders[0]->SetSpotLight(spotLight, spotLightCount);
 
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.CalculateViewMatrix()));
@@ -217,6 +223,25 @@ int main(void)
 		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
 		meshes[2]->RenderMesh();
+
+		// X-Wing
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
+		model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+		xWing.RenderModel();
+
+		// Blackhawk
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-3.0f, 2.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+		model = glm::rotate(model, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+
+		blackHawk.RenderModel();
 
 		glUseProgram(0);
 
