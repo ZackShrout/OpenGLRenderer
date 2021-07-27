@@ -1,17 +1,24 @@
 #pragma once
 
 #include "Common.h"
+#include "ShadowMap.h"
 
 class Light
 {
 public:
-	Light() : m_color{ glm::vec3(1.0f, 1.0f, 1.0f) }, m_ambientIntensity{ 1.0f }, m_diffuseIntensity{ 0.0f } {}
-	Light(GLfloat r, GLfloat g, GLfloat b, GLfloat aIntensity, GLfloat dIntensity) 
-		: m_color{ glm::vec3(r, g, b) }, m_ambientIntensity{ aIntensity }, m_diffuseIntensity{ dIntensity } {}
+	Light() {}
+	Light(GLfloat r, GLfloat g, GLfloat b, GLfloat aIntensity, GLfloat dIntensity, GLfloat shadowWidth, GLfloat shadowHeight);
 	~Light() {}
 
+	ShadowMap* GetShadowMap() { return m_shadowMap; }
+
 protected:
-	glm::vec3 m_color;
-	GLfloat m_ambientIntensity, m_diffuseIntensity;
+	glm::vec3 m_color{1.0f, 1.0f, 1.0f};
+	GLfloat m_ambientIntensity{ 1.0f };
+	GLfloat m_diffuseIntensity{ 0.0f };
+
+	glm::mat4 m_lightProjection{};
+	
+	ShadowMap* m_shadowMap{};
 };
 

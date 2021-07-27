@@ -4,6 +4,7 @@ in vec4 vColor;
 in vec2 texCoord;
 in vec3 normal;
 in vec3 fragPos;
+in vec4 directionalLightSpacePos;
 
 out vec4 color;
 
@@ -52,10 +53,44 @@ uniform PointLight pointLight[MAX_POINT_LIGHTS];
 uniform SpotLight spotLight[MAX_SPOT_LIGHTS];
 
 uniform sampler2D tex;
+uniform sampler2D dirShadowMap;
 uniform Material material;
 uniform vec3 eyePosition;
 
-vec4 CalcLightByDirection(Light light, vec3 direction)
+float CalcDirectionalShadowFactor(DirectionalLight light)
+{
+	vec3 projCoords = directionalLightSpacePos.xyz / directionalLightSpacePos.w;
+	projCoords = (projCoords * 0.5) + 0.5;
+
+	float current = projCoords.z;
+
+	vec3 bNormal = normalize(normal);
+	vec3 lightDir = normalize(light.direction);
+	float bias = max(0.05 * (1 - dot(bNormal, lightDir)), 0.005);
+
+	float shadow = 0.0;
+
+	vec2 texelSize = 1.0 / textureSize(dirShadowMap, 0);
+	for (int x = -1; x <= 1; ++x)
+	{
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(dirShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += current - bias > pcfDepth ? 1.0 : 0.0;
+		}
+	}
+
+	shadow /= 9;
+
+	if (projCoords.z > 1.0)
+	{
+		shadow = 0.0;
+	}
+
+	return shadow;
+}
+
+vec4 CalcLightByDirection(Light light, vec3 direction, float shadowFactor)
 {
 	vec4 ambientColor = vec4(light.color, 1.0f) * light.ambientIntensity;
 
@@ -77,12 +112,13 @@ vec4 CalcLightByDirection(Light light, vec3 direction)
 		}
 	}
 
-	return ambientColor + diffuseColor + specularColor;
+	return (ambientColor + (1.0 - shadowFactor) * (diffuseColor + specularColor));
 }
 
 vec4 CalcDirectionalLight()
 {
-	return CalcLightByDirection(directionalLight.base, directionalLight.direction);
+	float shadowFactor = CalcDirectionalShadowFactor(directionalLight);
+	return CalcLightByDirection(directionalLight.base, directionalLight.direction, shadowFactor);
 }
 
 vec4 CalcPointLight(PointLight pLight)
@@ -91,7 +127,7 @@ vec4 CalcPointLight(PointLight pLight)
 	float distance = length(direction);
 	direction = normalize(direction);
 
-	vec4 color = CalcLightByDirection(pLight.base, direction);
+	vec4 color = CalcLightByDirection(pLight.base, direction, 0.0f);
 	float attenuation = (pLight.exponent * distance * distance) + (pLight.linear * distance) + pLight.constant;
 
 	return (color / attenuation);
