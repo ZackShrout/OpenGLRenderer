@@ -4,8 +4,17 @@ void SpotLight::UseLight(unsigned int ambientIntensityLocation, unsigned int amb
 	unsigned int directionLocation, unsigned int constantLocation, unsigned int linearLocation, unsigned int exponentLocation, unsigned int edgeLocation)
 {
 	glUniform3f(ambientColorLocation, m_color.x, m_color.y, m_color.z);
-	glUniform1f(ambientIntensityLocation, m_ambientIntensity);
-	glUniform1f(diffuseIntensityLocation, m_diffuseIntensity);
+
+	if (isOn)
+	{
+		glUniform1f(ambientIntensityLocation, m_ambientIntensity);
+		glUniform1f(diffuseIntensityLocation, m_diffuseIntensity);
+	}
+	else
+	{
+		glUniform1f(ambientIntensityLocation, 0.0f);
+		glUniform1f(diffuseIntensityLocation, 0.0f);
+	}
 	glUniform3f(positionLocation, m_position.x, m_position.y, m_position.z);
 	glUniform3f(directionLocation, m_direction.x, m_direction.y, m_direction.z);
 	glUniform1f(constantLocation, m_constant);

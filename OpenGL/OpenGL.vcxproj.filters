@@ -54,6 +54,9 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OmniShadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -98,11 +101,17 @@
     <ClInclude Include="ShadowMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OmniShadowMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\vshader.glsl" />
     <None Include="Shaders\fshader.glsl" />
     <None Include="Shaders\vdirShadowMap.glsl" />
     <None Include="Shaders\fdirShadowMap.glsl" />
+    <None Include="Shaders\fomniShadowMap.glsl" />
+    <None Include="Shaders\vomniShadowMap.glsl" />
+    <None Include="Shaders\gomniShadowMap.glsl" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed)
 	: m_position{ startPosition }, m_worldUp{ startUp }, m_yaw{ startYaw }, m_pitch{ startPitch }, m_rotation { 0 }, m_movementSpeed{ startMoveSpeed }, m_turnSpeed{ startTurnSpeed }
 {
-	m_front = glm::vec3(0.0f, 0.0f, 1.0f);
+	m_front = glm::vec3(0.0f, 0.0f, -1.0f);
 
 	Update();
 }

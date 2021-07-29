@@ -15,7 +15,9 @@ public:
 	~Shader();
 
 	void CreateFromString(const char* vertexCode, const char* fragmentCode);
-	void CreateFromFile(const char* vertexFP, const char* fragmentFP);
+	void CreateFromFile(const char* vertexFP, const char* fragmentFP, const char* geometryFP = nullptr);
+	void Validate();
+
 	std::string ReadFile(const char* filePath);
 	unsigned int GetProjectionLocation() { return m_uniformProjection; }
 	unsigned int GetModelLocation() { return m_uniformModel; }
@@ -27,12 +29,15 @@ public:
 	unsigned int GetEyePositionLocation() { return m_uniformEyePosition; }
 	unsigned int GetSpecularIntensityLocation() { return m_uniformSpecularIntensity; }
 	unsigned int GetShininessLocation() { return m_uniformShininess; }
+	unsigned int GetOmniLightPosLocation() { return m_uniformOmniLightPos; }
+	unsigned int GetFarPlaneLocation() { return m_uniformFarPlane; }
 	void SetDirectionalLight(DirectionalLight* dLight);
-	void SetPointLight(PointLight* pLight, unsigned int lightCount);
-	void SetSpotLight(SpotLight* sLight, unsigned int lightCount);
+	void SetPointLight(PointLight* pLight, unsigned int lightCount, unsigned textureUnit, unsigned int offset);
+	void SetSpotLight(SpotLight* sLight, unsigned int lightCount, unsigned textureUnit, unsigned int offset);
 	void SetTexture(GLuint textureUnit);
 	void SetDirectionalShadowMap(GLuint textureUnit);
 	void SetDirectionalLightTransform(glm::mat4* lTransform);
+	void SetLightMatrices(std::vector<glm::mat4> lightMatrices);
 	void UseShader();
 	void ClearShader();
 
@@ -51,6 +56,9 @@ private:
 	GLuint m_uniformTexture{ 0 };
 	GLuint m_uniformDirectionalLightTransform{ 0 };
 	GLuint m_uniformDirectionalShadowMap{ 0 };
+	GLuint m_uniformOmniLightPos{ 0 };
+	GLuint m_uniformFarPlane{ 0 };
+	GLuint m_uniformLightMatrices[6]{};
 
 	struct
 	{
@@ -84,7 +92,14 @@ private:
 		GLuint uniformEdge{ 0 };
 	} m_uniformSpotLight[MAX_SPOT_LIGHTS]{};
 
-	void CompileShader(const char* vertexCode, const char* fragmentCode);
+	struct
+	{
+		GLuint shadowMap;
+		GLuint farPlane;
+	} m_uniformOmniShadowMap[MAX_SPOT_LIGHTS + MAX_POINT_LIGHTS]{};
+
+	void CompileShader(const char* vertexCode, const char* fragmentCode, const char* geometryCode = nullptr);
+	void CompileProgram();
 	void AddShader(unsigned int theProgram, const char* shaderCode, GLenum shaderType);
 };
 
