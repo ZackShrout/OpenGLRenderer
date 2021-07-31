@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Common.h"
-
+#include "Mesh.h"
+#include "Shader.h"
 
 class Texture
 {
@@ -21,3 +22,19 @@ private:
 	const char* m_filePath;
 };
 
+class Skybox
+{
+public:
+	Skybox() {};
+	Skybox(std::vector<std::string> faceLocations);
+	~Skybox() {};
+
+	void DrawSkybox(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+
+private:
+	Mesh* m_skyMesh{};
+	Shader* m_skyShader{};
+
+	GLuint m_textureID{ 0 };
+	GLuint m_uniformProjection{ 0 }, m_uniformView{ 0 };
+};

@@ -113,5 +113,7 @@
     <None Include="Shaders\fomniShadowMap.glsl" />
     <None Include="Shaders\vomniShadowMap.glsl" />
     <None Include="Shaders\gomniShadowMap.glsl" />
+    <None Include="Shaders\vskybox.glsl" />
+    <None Include="Shaders\fskybox.glsl" />
   </ItemGroup>
 </Project>

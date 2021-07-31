@@ -27,6 +27,7 @@ Model blackHawk;
 DirectionalLight mainLight;
 PointLight pointLight[MAX_POINT_LIGHTS];
 SpotLight spotLight[MAX_SPOT_LIGHTS];
+Skybox skybox;
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 Shader directionalShadowShader;
@@ -171,7 +172,7 @@ void RenderScene()
 	xWing.RenderModel();
 
 	// Blackhawk
-	blackhawkAngle += 0.01f;
+	blackhawkAngle += 0.03f;
 	if (blackhawkAngle > 360.0f)
 	{
 		blackhawkAngle = 0.1f;
@@ -232,6 +233,17 @@ void OmniShadowMapPass(PointLight* light)
 
 void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 {
+	// Set viewport size
+	glViewport(0, 0, 1366, 768);
+
+	// Clear the window
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Draw Skybox
+	skybox.DrawSkybox(viewMatrix, projectionMatrix);
+	
+	// Draw rest of scene
 	shaders[0]->UseShader();
 	uniformModel = shaders[0]->GetModelLocation();
 	uniformProjection = shaders[0]->GetProjectionLocation();
@@ -239,12 +251,6 @@ void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 	uniformEyePosition = shaders[0]->GetEyePositionLocation();
 	uniformSpecularIntensity = shaders[0]->GetSpecularIntensityLocation();
 	uniformShininess = shaders[0]->GetShininessLocation();
-
-	glViewport(0, 0, 1366, 768);
-	
-	// Clear the window
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 	glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -296,11 +302,11 @@ int main(void)
 	blackHawk = Model();
 	blackHawk.LoadModel("..\\OpenGL\\Models\\uh60.obj");
 
-	mainLight = DirectionalLight(0.0f, -15.0f, -10.0f, 1.0f, 1.0f, 1.0f, 0.1f, 0.3f, 2048, 2048);
+	mainLight = DirectionalLight(-10.0f, -12.0f, 18.5f, 1.0f, 0.53f, 0.3f, 0.1f, 0.9f, 2048, 2048);
 
-	pointLight[0] = PointLight(2.0f, 2.0f, 0.0f, 0.3, 0.1, 0.1, 0.1, 100, 0.0f, 0.0f, 1.0f, 0.0f, 0.4f, 1024, 1024);
+	pointLight[0] = PointLight(2.0f, 2.0f, 0.0f, 0.3, 0.2, 0.1, 0.1, 100, 0.0f, 0.0f, 1.0f, 0.0f, 0.4f, 1024, 1024);
 	pointLightCount++;
-	pointLight[1] = PointLight(-2.0f, 2.0f, 0.0f, 0.3, 0.1, 0.1, 0.1, 100, 0.0f, 1.0f, 0.0f, 0.0f, 0.4f, 1024, 1024);
+	pointLight[1] = PointLight(-2.0f, 2.0f, 0.0f, 0.3, 0.2, 0.1, 0.1, 100, 0.0f, 1.0f, 0.0f, 0.0f, 0.4f, 1024, 1024);
 	pointLightCount++;
 
 	spotLight[0] = SpotLight(0.0f, -1.0f, 0.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.3, 0.2, 0.1, 0.1, 100, 1.0f, 1.0f, 1.0f, 0.1f, 2.0f, 1024, 1024);
@@ -308,6 +314,16 @@ int main(void)
 
 	spotLight[1] = SpotLight(-100.0f, -1.0f, 0.0f, 20.0f, 0.0f, -1.5f, 0.0f, 0.3f, 0.2f, 0.1f, 0.1f, 100.0f, 1.0f, 1.0f, 1.0f, 0.1f, 0.2f, 1024, 1024);
 	spotLightCount++;
+
+	std::vector<std::string> skyboxFaces;
+	skyboxFaces.emplace_back("..\\OpenGL\\Textures\\Skybox\\cupertin-lake_rt.tga");
+	skyboxFaces.emplace_back("..\\OpenGL\\Textures\\Skybox\\cupertin-lake_lf.tga");
+	skyboxFaces.emplace_back("..\\OpenGL\\Textures\\Skybox\\cupertin-lake_up.tga");
+	skyboxFaces.emplace_back("..\\OpenGL\\Textures\\Skybox\\cupertin-lake_dn.tga");
+	skyboxFaces.emplace_back("..\\OpenGL\\Textures\\Skybox\\cupertin-lake_bk.tga");
+	skyboxFaces.emplace_back("..\\OpenGL\\Textures\\Skybox\\cupertin-lake_ft.tga");
+
+	skybox = Skybox(skyboxFaces);
 
 	glm::mat4 projection(1.0f);
 	projection = glm::perspective(glm::radians(60.0f), (GLfloat)mainWindow.GetBufferWidth() / (GLfloat)mainWindow.GetBufferHeight(), 0.1f, 100.0f);

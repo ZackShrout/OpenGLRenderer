@@ -55,10 +55,12 @@
     <None Include="Shaders\fdirShadowMap.glsl" />
     <None Include="Shaders\fomniShadowMap.glsl" />
     <None Include="Shaders\fshader.glsl" />
+    <None Include="Shaders\fskybox.glsl" />
     <None Include="Shaders\gomniShadowMap.glsl" />
     <None Include="Shaders\vdirShadowMap.glsl" />
     <None Include="Shaders\vomniShadowMap.glsl" />
     <None Include="Shaders\vshader.glsl" />
+    <None Include="Shaders\vskybox.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
